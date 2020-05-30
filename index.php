@@ -6,7 +6,7 @@ $dbpass = null !== DB_PASS ? "password=".DB_PASS : '';
 $dbconn = pg_connect("host=".DB_HOST." user=".DB_USER." {$dbpass} dbname=".DB_NAME." options='--client_encoding=UTF8'");
 
 $filter = array();
-if ( $is_game = get_var('is_game') != NULL ) 	$filter[] = "(game->>'isGame')::boolean IS TRUE";
+if ( $is_game = get_var('is_game') != NULL ) 	$filter[] = "(game->>'isGame')::boolean IS TRUE AND (game->>'title') NOT ILIKE '%Soundtrack%' AND (game->>'title') NOT ILIKE '% OST%'";
 if ( $title = get_var('title') ) {				$title = pg_escape_string($dbconn, $title); $filter[] = "(game->>'title') ILIKE '%{$title}%'"; }
 if ( $min_discount = get_var('min_discount' ) )	$filter[] = "(game->'price'->>'discountPercentage')::int >= " . (string)intval( $min_discount );
 if ( $rating = get_var('rating' ) )				$filter[] = "(game->>'rating')::int >= " . (string)intval( $rating );
@@ -43,6 +43,11 @@ $arr = pg_fetch_all(pg_query($dbconn, $sql));
 			
 			.pure-form-stacked button {
 				margin-left: 20px;
+			}
+			
+			.inlined {
+				margin-left: 17px;
+				margin-right: 17px;
 			}
 		}
 		@media (prefers-color-scheme: dark) {
@@ -93,9 +98,24 @@ $arr = pg_fetch_all(pg_query($dbconn, $sql));
 				color: #ccc;
 				background-color: #434343;
 			}
+			
 			::placeholder {
 			  color: #ccc;
 			  opacity: 0.9;
+			}
+			
+			.inlined {
+				display: block;
+			}
+			
+			.inlined > label,
+			.inlined > input {
+				float: left;
+				width: auto;
+			}
+			
+			.inlined > input {
+				min-height: 22px;
 			}
 		}
 	</style>
@@ -121,39 +141,36 @@ $arr = pg_fetch_all(pg_query($dbconn, $sql));
 				<form id="filter_form" class="pure-form pure-form-stacked">
 					<fieldset>
 						<legend>Search filters:</legend>
-
 						<div class="pure-g pure-text-center">
-
 							<div class="pure-u-1 pure-u-lg-1-5">
 								<label for="rating">Rating bigger or eq than...</label>
 								<input type="number" id="rating" name="rating" class="pure-u-23-24" placeholder="Rating bigger or eq than..." value="<?=$rating?>">
 							</div>
-
 							<div class="pure-u-1 pure-u-lg-1-5">
 								<label for="discount">Minimum discount...</label>
 								<input type="number" id="min_discount" name="min_discount" class="pure-u-23-24" placeholder="Minimum discount..." value="<?=$min_discount?>">
 							</div>
-
 							<div class="pure-u-1 pure-u-lg-1-5">
 								<label for="price_from">Price from...</label>
 								<input type="number" id="price_from" name="price_from" class="pure-u-23-24" placeholder="Price from..." value="<?=$price_from?>" step="0.01" min="0" max="1000" lang="en-150">
 							</div>
-
 							<div class="pure-u-1 pure-u-lg-1-5">
 								<label for="price_to">Price to...</label>
 								<input type="number" id="price_to" name="price_to" class="pure-u-23-24" placeholder="Price to..." value="<?=$price_to?>" step="0.01" min="0" max="1000" lang="en-150">
 							</div>
-
 							<div class="pure-u-1 pure-u-lg-1-5">
 								<label for="price_to">Title...</label>
 								<input type="text" id="title" name="title" class="pure-u-23-24" placeholder="Title..." value="<?=$title?>">
 							</div>
 						</div>
-
+						<div class="pure-g pure-text-center ">
+							<div class="pure-u-1 inlined">
+								<label for="is_game">Try to exclude non-games (Soundtracks, OSTs)...&nbsp;</label>
+								<input type="checkbox" id="is_game" name="is_game" class="pure-u-23-24" <?=!empty($is_game)?"checked":""?>>
+							</div>
+						</div>
 						<button type="submit" class="pure-button pure-button-primary">Filter</button>
-
 						<button type="submit" class="pure-button pure-button-secondary" onclick="filter_form_reset();">Clear</button>
-
 					</fieldset>
 				</form>
 
