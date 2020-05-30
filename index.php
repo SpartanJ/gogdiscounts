@@ -2,7 +2,7 @@
 require_once('config.php');
 require_once('functions.php');
 
-$dbpass = isset(DB_PASS) ? "password=".DB_PASS : '';
+$dbpass = null !== DB_PASS ? "password=".DB_PASS : '';
 $dbconn = pg_connect("host=".DB_HOST." user=".DB_USER." {$dbpass} dbname=".DB_NAME." options='--client_encoding=UTF8'");
 
 $filter = array();
@@ -33,6 +33,71 @@ $arr = pg_fetch_all(pg_query($dbconn, $sql));
 		a { color: #007EBD; text-decoration: none; }
 		a:hover { text-decoration: underline; }
 		.pure-text-center { text-align:center; }
+		.pure-form-stacked button {
+			margin-top: 8px;
+		}
+		@media (max-width: 1000px) {
+			.pure-form-stacked input {
+				margin: 4px auto!important;
+			}
+			
+			.pure-form-stacked button {
+				margin-left: 20px;
+			}
+		}
+		@media (prefers-color-scheme: dark) {
+			body {
+				background-color: #313537;
+				color: #ccc;
+			}
+			
+			.pure-table-horizontal td,
+			.pure-table-horizontal th {
+				border-bottom: 0;
+			}
+			
+			.pure-table thead {
+				background-color: #383D40;
+				color: #ccc;
+				border-bottom: 1px solid #5e5e5e;
+			}
+			
+			.pure-table {
+				border: 1px solid #5e5e5e;
+			}
+			
+			a {
+				color: #83b4e0;
+			}
+			
+			thead a {
+				color: #8fc5f5;
+			}
+			
+			input {
+				background-color: #31363A !important;
+				box-shadow: inset 0 1px 3px #1b1b1b !important;
+				border-color: #666 !important;
+				color: #ccc !important;
+			}
+			
+			.pure-form legend {
+				border-bottom: 1px solid #666!important;
+			}
+			
+			.pure-button-primary {
+				background-color: #535353;
+			}
+			
+			.pure-button-secondary {
+				color: #ccc;
+				background-color: #434343;
+			}
+			::placeholder {
+			  color: #ccc;
+			  opacity: 0.9;
+			}
+		}
 	</style>
 	<script>
 		function filter_form_reset() {
