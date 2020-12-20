@@ -9,18 +9,19 @@ if ( get_var('api_key') !== API_KEY ) {
 }
 
 $num_pages = 0;
-$next_page=1;
+$next_page =1;
 
+$table_name = get_table_name();
+$location = get_gog_loc();
 $dbpass = null != DB_PASS ? ";password=".DB_PASS : '';
 $pdo = new PDO("pgsql:host=".DB_HOST.";user=".DB_USER.";dbname=".DB_NAME.$dbpass);
-$pdo->query("DELETE FROM games");
+$pdo->query("DELETE FROM $table_name");
 
 $opts = array(
 	'http'=>array(
 		'method'=>"GET",
-		'header'=>"Accept-language: en-US\r\n" /*.
-			  "Cookie: gog_lc=AR_USD_en-US\r\n" */// gog_lc sets the location to query the prices,
-			  // GOG should stop supporting regional prices soon, but it's still working on some countries.
+		'header'=>"Accept-language: en-US\r\n" .
+			  ( $location ? "Cookie: gog_lc=$location\r\n" : '' )
 	)
 );
 $context = stream_context_create($opts);
@@ -39,7 +40,7 @@ do {
 
 	foreach ( $obj->products as $prod ) {
 		try {
-			$prep = $pdo->prepare('INSERT INTO games (id,game) VALUES (:id, :game)');
+			$prep = $pdo->prepare("INSERT INTO $table_name (id,game) VALUES (:id, :game)");
 			$prep->bindValue(':id', $prod->id);
 			$prep->bindValue(':game', json_encode($prod));
 			$prep->execute();

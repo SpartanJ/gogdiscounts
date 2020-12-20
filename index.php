@@ -4,6 +4,7 @@ require_once('functions.php');
 
 $dbpass = null !== DB_PASS ? "password=".DB_PASS : '';
 $dbconn = pg_connect("host=".DB_HOST." user=".DB_USER." {$dbpass} dbname=".DB_NAME." options='--client_encoding=UTF8'");
+$table_name = get_table_name();
 
 $filter = array();
 if ( $is_game = get_var('is_game') != NULL ) 	$filter[] = "(game->>'isGame')::boolean IS TRUE AND (game->>'title') NOT ILIKE '%Soundtrack%' AND (game->>'title') NOT ILIKE '% OST%'";
@@ -18,7 +19,7 @@ if ( !empty( $filters ) ) $filters = "WHERE {$filters}";
 $order_types = array( 'title' => "game->'title'", 'price' => "(game->'price'->>'amount')::float", 'discount' => "game->'price'->'discountPercentage'", 'rating' => "game->'rating'" );
 $order_type = $order_types[ get_var( 'order_type', 'discount' ) ];
 $order_dir = get_var( 'order_dir', 'DESC' );
-$sql = "SELECT * FROM games {$filters} ORDER BY {$order_type} {$order_dir}, game->'rating' DESC";
+$sql = "SELECT * FROM $table_name {$filters} ORDER BY {$order_type} {$order_dir}, game->'rating' DESC";
 $arr = pg_fetch_all(pg_query($dbconn, $sql));
 ?>
 <!DOCTYPE html>
@@ -169,6 +170,7 @@ $arr = pg_fetch_all(pg_query($dbconn, $sql));
 								<input type="checkbox" id="is_game" name="is_game" class="pure-u-23-24" <?=!empty($is_game)?"checked":""?>>
 							</div>
 						</div>
+						<input type="hidden" name="location" value="<?=$location?>" />
 						<button type="submit" class="pure-button pure-button-primary">Filter</button>
 						<button type="submit" class="pure-button pure-button-secondary" onclick="filter_form_reset();">Clear</button>
 					</fieldset>

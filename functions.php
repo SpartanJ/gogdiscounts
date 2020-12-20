@@ -12,3 +12,13 @@ function get_url( $order_type, $order_dir ) {
 	$query_arr['order_dir'] = $order_dir;
 	return '?' . http_build_query( $query_arr );
 }
+
+function get_table_name() {
+	$loc = get_var('location');
+	return $loc ? "games_" . $loc : "games";
+}
+
+function get_gog_loc() {
+	$loc = get_var('location');
+	return $loc == "ar" ? "AR_USD_en-US" : "";
+}

@@ -19,3 +19,11 @@ CREATE TABLE public.games (
 
 ALTER TABLE ONLY public.games
     ADD CONSTRAINT games_pkey PRIMARY KEY (id);
+
+CREATE TABLE public.games_ar (
+    game jsonb,
+    id bigint NOT NULL
+);
+
+ALTER TABLE ONLY public.games_ar
+    ADD CONSTRAINT games_ar_pkey PRIMARY KEY (id);
