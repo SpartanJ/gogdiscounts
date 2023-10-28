@@ -21,5 +21,5 @@ function get_table_name() {
 
 function get_gog_loc() {
 	$loc = get_var('location');
-	return $loc == "ar" ? "AR_USD_en-US" : "";
+	return $loc == "ar" ? "AR_USD_en-US" : "US_USD_en-US";
 }
